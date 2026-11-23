@@ -1,0 +1,48 @@
+San Francisco, blue
+Chicago, blue
+Montreal, blue
+Atlanta, blue
+Washington D.C., blue
+New York, blue
+London, blue
+Madrid, blue
+Paris, blue
+Essen, blue
+Milan, blue
+St. Petersburg, blue
+Los Angeles, yellow
+Mexico City, yellow
+Miami, yellow
+Bogota, yellow
+Lima, yellow
+Santiago, yellow
+Buenos Aires, yellow
+Sao Paulo, yellow
+Lagos, yellow
+Kinshasa, yellow
+Johannesburg, yellow
+Khartoum, yellow
+Algiers, black
+Istanbul, black
+Cairo, black
+Baghdad, black
+Riyadh, black
+Karachi, black
+Mumbai, black
+Delhi, black
+Chennai, black
+Kolkata, black
+Tehran, black
+Moscow, black
+Beijing, red
+Seoul, red
+Tokyo, red
+Osaka, red
+Taipei, red
+Shanghai, red
+Hong Kong, red
+Ho Chi Minh City, red
+Manila, red
+Sydney, red
+Bangkok, red
+Jakarta, red
