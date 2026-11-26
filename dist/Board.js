@@ -185,6 +185,7 @@ class Board {
         }
         // set up player deck and deal hands to players
         this.PlayerDeck = this.shuffle(this.PlayerDeck);
+        // console.log("Player Deck after shuffle:", this.PlayerDeck.map(card => card.name));
         for (const player of this.players) {
             player.hand.push(this.PlayerDeck.pop());
             player.hand.push(this.PlayerDeck.pop());

@@ -1,6 +1,7 @@
 import { CardLibrary } from "./CardLibrary";
 import { Board } from "./Board";
 import { Player } from "./Player";
+import { Game } from "./Game";
 
 async function main() {
 
@@ -15,8 +16,9 @@ async function main() {
     // console.log(board.cities);
     console.log(board.infectionDeck)
     // console.log(board.infectionDeck.length)
-    console.log(board.players)
+    console.log(board.players[0]!.hand)
     console.log(board.PlayerDeck)
-
+    const game = new Game(board);
+    game.play();
 }
 main().catch(console.error);

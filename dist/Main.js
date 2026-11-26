@@ -13,7 +13,7 @@ async function main() {
     // console.log(board.cities);
     console.log(board.infectionDeck);
     // console.log(board.infectionDeck.length)
-    console.log(board.players);
+    console.log(board.players[0].hand);
     console.log(board.PlayerDeck);
 }
 main().catch(console.error);
