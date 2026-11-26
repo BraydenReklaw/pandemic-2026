@@ -1,4 +1,4 @@
-import {CityCard} from "./Card";
+import {CityCard, EventCard} from "./Card";
 import { City } from "./City";
 
 export class Board {
@@ -10,6 +10,7 @@ export class Board {
     infectionDeck: CityCard[];
     infectionDiscard: CityCard[];
     infectionCubes: Record<string, number> = {};
+    PlayerDeck: CityCard | EventCard[];
 
 
     constructor(cards: CityCard[]) {
@@ -25,6 +26,7 @@ export class Board {
             "black": 24,
             "red": 24
         };
+        this.PlayerDeck = [];
         const adjacency: Record<string, string[]> = {
             "San Francisco": ["Chicago", "Los Angeles", "Tokyo", "Manila"],
             Chicago: ["San Francisco", "Los Angeles", "Mexico City", "Atlanta", "Montreal"],
@@ -120,6 +122,9 @@ export class Board {
 
     outbreak(city: City, visited: Set<City>, color: string): void {
         this.epidemicCount += 1;
+        if (this.epidemicCount >= 8) {
+            this.endGame("Too many outbreaks have occurred. Game over!");
+        }
         for (const neighbor of city.connectedCities) {
             if (!visited.has(neighbor)) {
                 visited.add(neighbor);
@@ -164,5 +169,9 @@ export class Board {
                 this.infectionDiscard.push(city!);
             }
         }
+
+        // set up player deck and deal hands to players
+        // Need to add event cards to this.cards before this point. Set them up somehow. 
+        this.PlayerDeck = this.shuffle(this.cards);
     }
 }

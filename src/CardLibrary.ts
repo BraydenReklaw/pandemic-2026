@@ -8,7 +8,7 @@ export class CardLibrary {
         this.cards = cards;
     }
 
-    static async fromFile(filePath: string): Promise<CardLibrary> {
+    static async citiesFromFile(filePath: string): Promise<CardLibrary> {
         const contents = await readFile(filePath, "utf8");
         const cards = contents
             .split(/\r?\n/)

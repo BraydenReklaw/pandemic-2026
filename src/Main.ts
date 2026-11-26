@@ -3,7 +3,7 @@ import { Board } from "./Board";
 
 async function main() {
 
-    const cityLibrary = await CardLibrary.fromFile("./cities.txt");
+    const cityLibrary = await CardLibrary.citiesFromFile("./cities.txt");
 
     const board = new Board(cityLibrary.cards);
     board.initialize();
