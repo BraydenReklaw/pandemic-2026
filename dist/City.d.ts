@@ -1,10 +1,11 @@
 import { Player } from './Player';
 export declare class City {
     name: string;
-    infectionLevel: number;
+    color: string;
+    infectionLevel: number[];
     players: Player[];
     researchStation: boolean;
     connectedCities: City[];
-    constructor(name: string, infectionLevel: number);
+    constructor(name: string, color: string);
 }
 //# sourceMappingURL=City.d.ts.map

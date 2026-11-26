@@ -1,7 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Board = void 0;
+const Card_1 = require("./Card");
+const CardLibrary_1 = require("./CardLibrary");
 const City_1 = require("./City");
+const BLUE = 0;
+const YELLOW = 1;
+const BLACK = 2;
+const RED = 3;
 class Board {
     cards;
     cities;
@@ -10,13 +16,29 @@ class Board {
     infectionRate;
     infectionDeck;
     infectionDiscard;
-    constructor(cards) {
+    infectionCubes = {};
+    PlayerDeck;
+    players;
+    infectionIndex;
+    difficulty;
+    constructor(cards, players, difficulty = 4) {
         this.cards = cards;
+        this.players = players;
         this.cured = [false, false, false, false];
         this.epidemicCount = 0;
         this.infectionRate = [2, 2, 2, 3, 3, 4, 4];
+        this.infectionIndex = 0;
         this.infectionDeck = [...cards];
         this.infectionDiscard = [];
+        this.infectionCubes = {
+            "blue": 24,
+            "yellow": 24,
+            "black": 24,
+            "red": 24
+        };
+        this.PlayerDeck = CardLibrary_1.CardLibrary.generateEventCards();
+        this.PlayerDeck = [...this.PlayerDeck, ...cards];
+        this.difficulty = difficulty;
         const adjacency = {
             "San Francisco": ["Chicago", "Los Angeles", "Tokyo", "Manila"],
             Chicago: ["San Francisco", "Los Angeles", "Mexico City", "Atlanta", "Montreal"],
@@ -69,7 +91,7 @@ class Board {
         };
         const citiesByName = new Map();
         for (const name of Object.keys(adjacency)) {
-            citiesByName.set(name, new City_1.City(name, 0));
+            citiesByName.set(name, new City_1.City(name, this.cards.find((card) => card.name === name)?.color || ""));
         }
         this.cities = Array.from(citiesByName.values());
         for (const [name, neighborNames] of Object.entries(adjacency)) {
@@ -93,25 +115,51 @@ class Board {
         }
         return city;
     }
-    outbreak(city, visited) {
+    getColorIndex(color) {
+        if (color === "blue")
+            return BLUE;
+        if (color === "yellow")
+            return YELLOW;
+        if (color === "black")
+            return BLACK;
+        if (color === "red")
+            return RED;
+        throw new Error(`Unknown color "${color}"`);
+    }
+    endGame(message) {
+        console.log(message);
+        process.exit(0);
+    }
+    subtractInfectionCubes(color, amount) {
+        this.infectionCubes[color] -= amount;
+        if (this.infectionCubes[color] <= 0) {
+            this.endGame(`Infection cubes of color ${color} have run out. Game over!`);
+        }
+    }
+    outbreak(city, visited, color) {
         this.epidemicCount += 1;
+        if (this.epidemicCount >= 8) {
+            this.endGame("Too many outbreaks have occurred. Game over!");
+        }
         for (const neighbor of city.connectedCities) {
             if (!visited.has(neighbor)) {
                 visited.add(neighbor);
-                neighbor.infectionLevel += 1;
-                if (neighbor.infectionLevel > 3) {
-                    neighbor.infectionLevel = 3;
-                    this.outbreak(neighbor, visited);
+                neighbor.infectionLevel[color] += 1;
+                this.subtractInfectionCubes(city.color, 1);
+                if (neighbor.infectionLevel[color] > 3) {
+                    neighbor.infectionLevel[color] = 3;
+                    this.outbreak(neighbor, visited, color);
                 }
             }
         }
     }
-    infect(cityCard, amount) {
+    infect(cityCard, amount, color) {
         const city = this.getCity(cityCard.name);
-        city.infectionLevel += amount;
-        if (city.infectionLevel > 3) {
-            city.infectionLevel = 3;
-            this.outbreak(city, new Set([city]));
+        city.infectionLevel[color] += amount;
+        this.subtractInfectionCubes(cityCard.color, amount);
+        if (city.infectionLevel[color] > 3) {
+            city.infectionLevel[color] = 3;
+            this.outbreak(city, new Set([city]), color);
         }
     }
     shuffle(array) {
@@ -130,10 +178,44 @@ class Board {
         for (var i = 3; i > 0; i--) {
             for (var j = 0; j < 3; j++) {
                 const city = this.infectionDeck.pop();
-                this.infect(city, i);
+                const color = this.getColorIndex(city.color);
+                this.infect(city, i, color);
                 this.infectionDiscard.push(city);
             }
         }
+        // set up player deck and deal hands to players
+        this.PlayerDeck = this.shuffle(this.PlayerDeck);
+        for (const player of this.players) {
+            player.hand.push(this.PlayerDeck.pop());
+            player.hand.push(this.PlayerDeck.pop());
+            if (this.players.length === 2) {
+                player.hand.push(this.PlayerDeck.pop());
+                player.hand.push(this.PlayerDeck.pop());
+            }
+            else if (this.players.length === 3) {
+                player.hand.push(this.PlayerDeck.pop());
+            }
+        }
+        // Set up playerDeck with epidemic cards
+        var epidemicDeck = [];
+        for (let i = 0; i < this.difficulty; i++) {
+            var deck = [];
+            const epidemicCard = new Card_1.EventCard("Epidemic");
+            deck.push(epidemicCard);
+            epidemicDeck.push(deck);
+        }
+        while (this.PlayerDeck.length > 0) {
+            for (let i = 0; i < epidemicDeck.length; i++) {
+                if (this.PlayerDeck.length === 0) {
+                    break;
+                }
+                epidemicDeck[i].push(this.PlayerDeck.pop());
+            }
+        }
+        for (let i = 0; i < epidemicDeck.length; i++) {
+            epidemicDeck[i] = this.shuffle(epidemicDeck[i]);
+        }
+        this.PlayerDeck = epidemicDeck.flat();
     }
 }
 exports.Board = Board;

@@ -8,7 +8,7 @@ class CardLibrary {
     constructor(cards) {
         this.cards = cards;
     }
-    static async fromFile(filePath) {
+    static async citiesFromFile(filePath) {
         const contents = await (0, promises_1.readFile)(filePath, "utf8");
         const cards = contents
             .split(/\r?\n/)
@@ -26,6 +26,15 @@ class CardLibrary {
             return new Card_1.CityCard(name, color);
         });
         return new CardLibrary(cards);
+    }
+    static generateEventCards() {
+        var cards = [];
+        cards.push(new Card_1.EventCard("Airlift"));
+        cards.push(new Card_1.EventCard("Forecast"));
+        cards.push(new Card_1.EventCard("Government Grant"));
+        cards.push(new Card_1.EventCard("One Quiet Night"));
+        cards.push(new Card_1.EventCard("Resilient Population"));
+        return cards;
     }
 }
 exports.CardLibrary = CardLibrary;

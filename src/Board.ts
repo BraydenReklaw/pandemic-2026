@@ -196,7 +196,6 @@ export class Board {
         }
 
         // set up player deck and deal hands to players
-        // Need to add event cards to this.cards before this point. Set them up somehow. 
         this.PlayerDeck = this.shuffle(this.PlayerDeck);
         for (const player of this.players) {
             player.hand.push(this.PlayerDeck.pop()!);
@@ -208,5 +207,27 @@ export class Board {
                 player.hand.push(this.PlayerDeck.pop()!);
             }
         }
+
+        // Set up playerDeck with epidemic cards
+        var epidemicDeck: Card[][] = []
+        for (let i = 0; i < this.difficulty; i++) {
+            var deck = []
+            const epidemicCard = new EventCard("Epidemic");
+            deck.push(epidemicCard);
+            epidemicDeck.push(deck);
+        }
+
+        while (this.PlayerDeck.length > 0) {
+            for (let i = 0; i < epidemicDeck.length; i++) {
+                if (this.PlayerDeck.length === 0) {
+                    break;
+                }
+                epidemicDeck[i]!.push(this.PlayerDeck.pop()!);
+            }
+        }
+        for (let i = 0; i < epidemicDeck.length; i++) {
+            epidemicDeck[i] = this.shuffle(epidemicDeck[i]!);
+        }
+        this.PlayerDeck = epidemicDeck.flat();
     }
 }
