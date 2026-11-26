@@ -86,9 +86,54 @@ class Board {
             });
         }
     }
+    getCity(name) {
+        const city = this.cities.find((c) => c.name === name);
+        if (!city) {
+            throw new Error(`City "${name}" not found on the board`);
+        }
+        return city;
+    }
+    outbreak(city, visited) {
+        this.epidemicCount += 1;
+        for (const neighbor of city.connectedCities) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                neighbor.infectionLevel += 1;
+                if (neighbor.infectionLevel > 3) {
+                    neighbor.infectionLevel = 3;
+                    this.outbreak(neighbor, visited);
+                }
+            }
+        }
+    }
+    infect(cityCard, amount) {
+        const city = this.getCity(cityCard.name);
+        city.infectionLevel += amount;
+        if (city.infectionLevel > 3) {
+            city.infectionLevel = 3;
+            this.outbreak(city, new Set([city]));
+        }
+    }
+    shuffle(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
     initialize() {
         const atlanta = this.cities.find((city) => city.name === "Atlanta");
         atlanta.researchStation = true;
+        // set up initial infection levels for cities
+        this.infectionDeck = this.shuffle(this.infectionDeck);
+        for (var i = 3; i > 0; i--) {
+            for (var j = 0; j < 3; j++) {
+                const city = this.infectionDeck.pop();
+                this.infect(city, i);
+                this.infectionDiscard.push(city);
+            }
+        }
     }
 }
 exports.Board = Board;

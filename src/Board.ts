@@ -9,6 +9,7 @@ export class Board {
     infectionRate: number[];
     infectionDeck: CityCard[];
     infectionDiscard: CityCard[];
+    infectionCubes: Record<string, number> = {};
 
 
     constructor(cards: CityCard[]) {
@@ -18,6 +19,12 @@ export class Board {
         this.infectionRate = [2, 2, 2, 3, 3, 4, 4];
         this.infectionDeck = [...cards];
         this.infectionDiscard = [];
+        this.infectionCubes = {
+            "blue": 24,
+            "yellow": 24,
+            "black": 24,
+            "red": 24
+        };
         const adjacency: Record<string, string[]> = {
             "San Francisco": ["Chicago", "Los Angeles", "Tokyo", "Manila"],
             Chicago: ["San Francisco", "Los Angeles", "Mexico City", "Atlanta", "Montreal"],
@@ -91,8 +98,71 @@ export class Board {
         }
     }
 
+    private getCity(name: string): City {
+        const city = this.cities.find((c) => c.name === name);
+        if (!city) {
+            throw new Error(`City "${name}" not found on the board`);
+        }
+        return city;
+    }
+
+    endGame(message: string): void {
+        console.log(message);
+        process.exit(0);
+    }
+
+    subtractInfectionCubes(color: string, amount: number): void {
+        this.infectionCubes[color]! -= amount;
+        if (this.infectionCubes[color]! <= 0) {
+            this.endGame(`Infection cubes of color ${color} have run out. Game over!`);
+        }
+    }
+
+    outbreak(city: City, visited: Set<City>, color: string): void {
+        this.epidemicCount += 1;
+        for (const neighbor of city.connectedCities) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                neighbor.infectionLevel += 1;
+                this.subtractInfectionCubes(color, 1);
+                if (neighbor.infectionLevel > 3) {
+                    neighbor.infectionLevel = 3;
+                    this.outbreak(neighbor, visited, color);
+                }
+            }
+        }
+    }
+
+    infect(cityCard: CityCard, amount: number): void {
+        const city = this.getCity(cityCard.name);
+        city.infectionLevel += amount;
+        this.subtractInfectionCubes(cityCard.color, amount);
+        if (city.infectionLevel > 3) {
+            city.infectionLevel = 3;
+            this.outbreak(city, new Set<City>([city]), cityCard.color);
+        }
+    }
+
+    shuffle(array: CityCard[]): CityCard[] {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+        }
+        return shuffled;
+    }
+
     initialize(): void {
         const atlanta = this.cities.find((city) => city.name === "Atlanta");
         atlanta!.researchStation = true;
+        // set up initial infection levels for cities
+        this.infectionDeck = this.shuffle(this.infectionDeck);
+        for (var i = 3; i > 0; i--) {
+            for (var j = 0; j < 3; j++) {
+                const city = this.infectionDeck.pop();
+                this.infect(city!, i); 
+                this.infectionDiscard.push(city!);
+            }
+        }
     }
 }

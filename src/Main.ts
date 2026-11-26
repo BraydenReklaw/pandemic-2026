@@ -10,8 +10,8 @@ async function main() {
     // const graphPath = await renderBoardGraph(board);
     // console.log(`Board graph visualization written to ${graphPath}`);
 
-    // console.log(board.cities);
+    console.log(board.cities);
     // console.log(board.infectionDeck)
-    // console.log(board.infectionDeck.length)
+    console.log(board.infectionDeck.length)
 }
 main().catch(console.error);

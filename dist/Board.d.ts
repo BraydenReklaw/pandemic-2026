@@ -9,6 +9,10 @@ export declare class Board {
     infectionDeck: CityCard[];
     infectionDiscard: CityCard[];
     constructor(cards: CityCard[]);
+    private getCity;
+    outbreak(city: City, visited: Set<City>): void;
+    infect(cityCard: CityCard, amount: number): void;
+    shuffle(array: CityCard[]): CityCard[];
     initialize(): void;
 }
 //# sourceMappingURL=Board.d.ts.map
