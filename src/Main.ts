@@ -1,6 +1,5 @@
 import { CardLibrary } from "./CardLibrary";
 import { Board } from "./Board";
-import { renderBoardGraph } from "./visualization/RenderBoardGraph";
 
 async function main() {
 
@@ -8,9 +7,11 @@ async function main() {
 
     const board = new Board(cityLibrary.cards);
     board.initialize();
-    const graphPath = await renderBoardGraph(board);
-    console.log(`Board graph visualization written to ${graphPath}`);
+    // const graphPath = await renderBoardGraph(board);
+    // console.log(`Board graph visualization written to ${graphPath}`);
 
-    console.log(board.cities);
+    // console.log(board.cities);
+    // console.log(board.infectionDeck)
+    // console.log(board.infectionDeck.length)
 }
 main().catch(console.error);

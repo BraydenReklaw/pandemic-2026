@@ -5,6 +5,9 @@ export declare class Board {
     cities: City[];
     cured: Boolean[];
     epidemicCount: number;
+    infectionRate: number[];
+    infectionDeck: CityCard[];
+    infectionDiscard: CityCard[];
     constructor(cards: CityCard[]);
     initialize(): void;
 }

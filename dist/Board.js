@@ -7,10 +7,16 @@ class Board {
     cities;
     cured;
     epidemicCount;
+    infectionRate;
+    infectionDeck;
+    infectionDiscard;
     constructor(cards) {
         this.cards = cards;
         this.cured = [false, false, false, false];
         this.epidemicCount = 0;
+        this.infectionRate = [2, 2, 2, 3, 3, 4, 4];
+        this.infectionDeck = [...cards];
+        this.infectionDiscard = [];
         const adjacency = {
             "San Francisco": ["Chicago", "Los Angeles", "Tokyo", "Manila"],
             Chicago: ["San Francisco", "Los Angeles", "Mexico City", "Atlanta", "Montreal"],

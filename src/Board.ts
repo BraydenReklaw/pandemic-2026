@@ -6,11 +6,18 @@ export class Board {
     cities: City[];
     cured: Boolean[];
     epidemicCount: number;
+    infectionRate: number[];
+    infectionDeck: CityCard[];
+    infectionDiscard: CityCard[];
+
 
     constructor(cards: CityCard[]) {
         this.cards = cards;
         this.cured = [false, false, false, false];
         this.epidemicCount = 0;
+        this.infectionRate = [2, 2, 2, 3, 3, 4, 4];
+        this.infectionDeck = [...cards];
+        this.infectionDiscard = [];
         const adjacency: Record<string, string[]> = {
             "San Francisco": ["Chicago", "Los Angeles", "Tokyo", "Manila"],
             Chicago: ["San Francisco", "Los Angeles", "Mexico City", "Atlanta", "Montreal"],
