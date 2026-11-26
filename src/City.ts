@@ -2,13 +2,15 @@ import { Player } from './Player';
 
 export class City {
     name: string;
-    infectionLevel: number;
+    color: string;
+    infectionLevel: number[];
     players: Player[];
     researchStation: boolean;
     connectedCities: City[];
-    constructor(name: string, infectionLevel: number) {
+    constructor(name: string, color: string) {
         this.name = name;
-        this.infectionLevel = infectionLevel;
+        this.color = color;
+        this.infectionLevel = [0, 0, 0, 0]; // blue, yellow, black, red
         this.players = [];
         this.researchStation = false;
         this.connectedCities = [];

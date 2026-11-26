@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { CityCard } from "./Card";
+import { Card, CityCard, EventCard } from "./Card";
 
 export class CardLibrary {
     readonly cards: CityCard[];
@@ -29,5 +29,15 @@ export class CardLibrary {
             });
 
         return new CardLibrary(cards);
+    }
+
+    static generateEventCards(): EventCard[] {
+        var cards = []
+        cards.push(new EventCard("Airlift"));
+        cards.push(new EventCard("Forecast"));
+        cards.push(new EventCard("Government Grant"));
+        cards.push(new EventCard("One Quiet Night"));
+        cards.push(new EventCard("Resilient Population"));
+        return cards;
     }
 }
